@@ -50,3 +50,6 @@ button:disabled{opacity:.35}
 .mem{aspect-ratio:1;font-size:34px;padding:0}
 .mem.up{background:var(--card);color:var(--fg);border-color:var(--line)}
 .mem.done{background:var(--card);color:var(--fg);border-color:var(--ok);opacity:.5}
+.g3{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.sl{aspect-ratio:1;font-size:40px;padding:0}
+.sl.gap{visibility:hidden}

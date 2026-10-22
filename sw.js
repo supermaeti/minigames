@@ -1,7 +1,7 @@
 // Service Worker: Offline-Betrieb. Neue Spiele-Dateien unten in FILES eintragen.
-const V = 'mg-v2';
+const V = 'mg-v3';
 const FILES = ['./', 'index.html', 'style.css', 'app.js', 'manifest.webmanifest',
-  'higher-lower.js', 'time-guess.js', 'blitz-tippen.js', 'kopfrechnen.js', 'farbe-wort.js', 'memory.js', 'icon-192.png', 'icon-512.png'];
+  'higher-lower.js', 'time-guess.js', 'blitz-tippen.js', 'kopfrechnen.js', 'farbe-wort.js', 'memory.js', 'zahlenfolge.js', 'schiebepuzzle.js', 'icon-192.png', 'icon-512.png'];
 self.addEventListener('install', e => {
   e.waitUntil(caches.open(V).then(c => c.addAll(FILES)).then(() => self.skipWaiting()));
 });
