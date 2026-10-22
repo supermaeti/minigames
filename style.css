@@ -37,3 +37,16 @@ button:disabled{opacity:.35}
 .shape{position:absolute;border-radius:50%;opacity:.85;pointer-events:none;animation:drift .9s linear forwards}
 @keyframes drift{from{transform:translate(0,0)}to{transform:translate(var(--dx),var(--dy))}}
 @media (prefers-reduced-motion:reduce){.card.pop,.spark,.shape{animation:none}.spark{display:none}}
+.stage{flex-direction:column;gap:6px}
+.stage.s{height:140px}
+.tap{height:260px;font-size:34px}
+.tbar{height:10px;border-radius:5px;background:var(--line);overflow:hidden}
+.tbar>i{display:block;height:100%;width:0;background:var(--btn)}
+.pad{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.pad button{font-size:26px;padding:16px 0}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.g2 button{font-size:22px;padding:22px 0}
+.g4{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
+.mem{aspect-ratio:1;font-size:34px;padding:0}
+.mem.up{background:var(--card);color:var(--fg);border-color:var(--line)}
+.mem.done{background:var(--card);color:var(--fg);border-color:var(--ok);opacity:.5}
