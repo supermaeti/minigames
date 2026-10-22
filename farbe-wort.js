@@ -25,7 +25,7 @@
       function next() {
         var w = rnd(4), c = (w + 1 + rnd(3)) % 4; ans = c;
         stage.innerHTML = '<div class="big" style="color:' + C[c][1] + '">' + C[w][0] + '</div>';
-        var lim = Math.max(1500, 3000 - score * 50); startBar(lim);
+        var lim = Math.max(2500, 5000 - score * 50); startBar(lim);
         tm = setTimeout(function () { answer(-1); }, lim);
       }
       function answer(i) {

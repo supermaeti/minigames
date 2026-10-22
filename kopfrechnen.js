@@ -19,15 +19,15 @@
       function render() { stage.innerHTML = '<div class="big">' + text + ' = ?</div><div class="big">' + (input || '…') + '</div>'; }
       function gen() {
         var op = ['+', '−', '×', '÷'][rnd(4)], a, b;
-        if (op === '+') { a = 1 + rnd(1000); b = 1 + rnd(1000); ans = a + b; }
-        else if (op === '−') { a = 2 + rnd(999); b = 1 + rnd(a - 1); ans = a - b; }
+        if (op === '+') { a = 1 + rnd(100); b = 1 + rnd(100); ans = a + b; }
+        else if (op === '−') { a = 2 + rnd(99); b = 1 + rnd(a - 1); ans = a - b; }
         else if (op === '×') { a = 2 + rnd(11); b = 2 + rnd(19); ans = a * b; }
         else { b = 2 + rnd(11); ans = 2 + rnd(19); a = b * ans; }
         text = a + ' ' + op + ' ' + b;
       }
       function next() {
         gen(); input = ''; render();
-        var lim = Math.max(7000, 12000 - score * 200); startBar(lim);
+        var lim = Math.max(9000, 14000 - score * 200); startBar(lim);
         tm = setTimeout(function () { answer(null); }, lim);
       }
       function answer(v) {
