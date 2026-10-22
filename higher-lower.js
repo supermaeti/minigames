@@ -2,30 +2,30 @@ registerGame({
   id: 'higher-lower', icon: '🃏', title: 'Höher oder Tiefer', desc: 'Rate, ob die nächste Karte höher, tiefer oder gleich ist.',
   stop: function () {},
   start: function (el) {
-    var ID = 'higher-lower', SUITS = ['♠', '♥', '♦', '♣'], LABEL = { 11: 'J', 12: 'Q', 13: 'K', 14: 'A' };
+    var ID = 'higher-lower', SUITS = [['🌹', 'Rosen', '#d6336c'], ['🛡️', 'Schilten', '#c0392b'], ['🌰', 'Eicheln', '#2d7a45'], ['🔔', 'Schellen', '#c98a00']], LABEL = { 11: 'Under', 12: 'Ober', 13: 'König', 14: 'As' };
     var NAMES = { lower: 'Tiefer', equal: 'Gleich', higher: 'Höher' };
     var deck = [], cur = null, points = 10, bet = 1, gamble = false, help = false, over = false;
     var best = Math.max(10, store.get('best_' + ID, 10));
     el.innerHTML =
       '<div class="top"><div class="pts"><span data-pts>10</span><small>Punkte</small></div>' +
       '<div class="meta">Rekord: <span data-best></span><br>Karten übrig: <span data-left></span></div></div>' +
-      '<div class="card" data-card><span data-rank></span><span class="s" data-suit></span></div>' +
+      '<div class="card" data-card><span data-rank></span><span class="s" data-suit></span><span class="n" data-sname></span></div>' +
       '<div class="msg" data-msg></div>' +
       '<div data-betbox><div class="lbl">Einsatz</div><div class="row" data-bets></div></div>' +
       '<div class="row" data-guess><button data-g="lower">Tiefer</button><button data-g="equal">Gleich</button><button data-g="higher">Höher</button></div>' +
       '<div class="row"><button class="alt" data-gamble></button><button class="alt" data-help></button></div>' +
       '<div class="row"><button class="alt hide" data-again>Neues Spiel</button></div>' +
-      '<div class="rules">Ass ist die höchste Karte. Richtig = + Einsatz, falsch = − Einsatz. «Gleich» richtig = doppelte Punkte. Bei gleichem Wert sind Höher/Tiefer falsch. Bei 0 Punkten ist Schluss. Hilfe zeigt die Wahrscheinlichkeiten anhand der restlichen Karten und kostet 0,5 Punkte pro Tipp.</div>';
+      '<div class="rules">Deutschschweizer Blatt: 6, 7, 8, 9, 10, Under, Ober, König, As – das As ist die höchste Karte. Richtig = + Einsatz, falsch = − Einsatz. «Gleich» richtig = doppelte Punkte. Bei gleichem Wert sind Höher/Tiefer falsch. Bei 0 Punkten ist Schluss. Hilfe zeigt die Wahrscheinlichkeiten anhand der restlichen Karten und kostet 0,5 Punkte pro Tipp.</div>';
     var q = function (s) { return el.querySelector(s); };
 
     function newDeck() {
       var d = [];
-      for (var s = 0; s < 4; s++) for (var v = 2; v <= 14; v++) d.push({ v: v, s: SUITS[s] });
+      for (var s = 0; s < 4; s++) for (var v = 6; v <= 14; v++) d.push({ v: v, s: s });
       for (var i = d.length - 1; i > 0; i--) { var j = Math.floor(Math.random() * (i + 1)), t = d[i]; d[i] = d[j]; d[j] = t; }
       return d;
     }
     function draw() { if (!deck.length) deck = newDeck(); return deck.pop(); }
-    function name(c) { return (LABEL[c.v] || c.v) + c.s; }
+    function name(c) { return (LABEL[c.v] || c.v) + ' ' + SUITS[c.s][0]; }
     function probs() {
       var d = deck.length ? deck : newDeck(), l = 0, e = 0, h = 0;
       d.forEach(function (c) { if (c.v < cur.v) l++; else if (c.v > cur.v) h++; else e++; });
@@ -46,8 +46,9 @@ registerGame({
       }
     }
     function show() {
-      q('[data-rank]').textContent = LABEL[cur.v] || cur.v; q('[data-suit]').textContent = cur.s;
-      q('[data-card]').className = 'card' + (cur.s === '♥' || cur.s === '♦' ? ' red' : '');
+      var rk = q('[data-rank]'); rk.textContent = LABEL[cur.v] || cur.v; rk.className = LABEL[cur.v] ? 'w' : '';
+      q('[data-suit]').textContent = SUITS[cur.s][0]; q('[data-sname]').textContent = SUITS[cur.s][1];
+      q('[data-card]').className = 'card'; q('[data-card]').style.color = SUITS[cur.s][2];
       q('[data-pts]').textContent = fmt(points); q('[data-best]').textContent = fmt(best); q('[data-left]').textContent = deck.length;
       q('[data-betbox]').classList.toggle('hide', !gamble);
       var gb = q('[data-gamble]'); gb.textContent = 'Gamble: ' + (gamble ? 'an' : 'aus'); gb.classList.toggle('on', gamble);
