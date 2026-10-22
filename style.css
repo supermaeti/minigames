@@ -58,3 +58,6 @@ button:disabled{opacity:.35}
 .sw{font-size:24px;padding:20px 0}
 .stage.a{height:auto;min-height:140px}
 .code{margin:0;font-family:ui-monospace,Menlo,Consolas,monospace;text-align:left;font-size:19px;line-height:1.5}
+.hist{display:flex;flex-direction:column;gap:4px}
+.hist div{display:flex;justify-content:space-between;align-items:center;padding:6px 12px;border:1px solid var(--line);border-radius:8px;background:var(--card);font-size:18px}
+.hist b{letter-spacing:.35em;font-family:ui-monospace,Menlo,Consolas,monospace}
