@@ -27,7 +27,7 @@
       }
       function next() {
         gen(); input = ''; render();
-        var lim = Math.max(4000, 8000 - score * 200); startBar(lim);
+        var lim = Math.max(7000, 12000 - score * 200); startBar(lim);
         tm = setTimeout(function () { answer(null); }, lim);
       }
       function answer(v) {
