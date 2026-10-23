@@ -3,25 +3,20 @@ registerGame({
   stop: function () {},
   start: function (el) {
     var ID = 'higher-lower', SUITS = [['🌹', 'Rosen', '#d6336c'], ['🛡️', 'Schilten', '#c0392b'], ['🌰', 'Eicheln', '#2d7a45'], ['🔔', 'Schellen', '#c98a00']], LABEL = { 11: 'Under', 12: 'Ober', 13: 'König', 14: 'As' };
-    var ICON = [
-      "<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64' width='72' height='72'><g fill='#e0457b' stroke='#a61e4d' stroke-width='1.5'><circle cx='32' cy='14' r='11'/><circle cx='49' cy='26.4' r='11'/><circle cx='42.6' cy='46.6' r='11'/><circle cx='21.4' cy='46.6' r='11'/><circle cx='15' cy='26.4' r='11'/></g><circle cx='32' cy='32' r='10' fill='#a61e4d'/><circle cx='32' cy='32' r='4.5' fill='#f7c948'/></svg>",
-      "<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64' width='72' height='72'><path d='M9 6H55V34C55 48 45 58 32 62C19 58 9 48 9 34Z' fill='#c0392b' stroke='#7b1f15' stroke-width='2'/><rect x='28' y='13' width='8' height='38' fill='#fff'/><rect x='17' y='24' width='30' height='8' fill='#fff'/></svg>",
-      "<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64' width='72' height='72'><path d='M32 14V4' stroke='#5d4037' stroke-width='4' stroke-linecap='round'/><path d='M15 28C15 46 23 58 32 61C41 58 49 46 49 28Z' fill='#8bc34a' stroke='#4e7d1f' stroke-width='2'/><path d='M10 28C10 17 20 12 32 12C44 12 54 17 54 28Z' fill='#6d4c41' stroke='#3e2723' stroke-width='2'/><path d='M18 20L24 28M28 16L34 28M40 16L46 28' stroke='#3e2723' stroke-width='1.5' fill='none'/></svg>",
-      "<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64' width='72' height='72'><circle cx='32' cy='7' r='4' fill='#b87f00'/><path d='M32 9C22 9 16 17 16 28C16 40 10 45 7 51H57C54 45 48 40 48 28C48 17 42 9 32 9Z' fill='#f2b01e' stroke='#b87f00' stroke-width='2'/><path d='M22 24C22 18 26 14 30 13' stroke='#fde08a' stroke-width='3' stroke-linecap='round' fill='none'/><circle cx='32' cy='56' r='6' fill='#b87f00'/></svg>"
-    ];
     var NAMES = { lower: 'Tiefer', equal: 'Gleich', higher: 'Höher' };
     var deck = [], cur = null, points = 10, bet = 1, gamble = false, help = false, over = false;
     var best = Math.max(10, store.get('best_' + ID, 10));
     el.innerHTML =
       '<div class="top"><div class="pts"><span data-pts>10</span><small>Punkte</small></div>' +
       '<div class="meta">Rekord: <span data-best></span><br>Karten übrig: <span data-left></span></div></div>' +
-      '<div class="card" data-card><span data-rank></span><span class="s" data-suit></span><span class="n" data-sname></span></div>' +
+      '<div class="card kimg" data-card role="img"></div>' +
       '<div class="msg" data-msg></div>' +
       '<div data-betbox><div class="lbl">Einsatz</div><div class="row" data-bets></div></div>' +
       '<div class="row" data-guess><button data-g="lower">Tiefer</button><button data-g="equal">Gleich</button><button data-g="higher">Höher</button></div>' +
       '<div class="row"><button class="alt" data-gamble></button><button class="alt" data-help></button></div>' +
       '<div class="row"><button class="alt hide" data-again>Neues Spiel</button></div>' +
-      '<div class="rules">Deutschschweizer Blatt: 6, 7, 8, 9, 10, Under, Ober, König, As – das As ist die höchste Karte. Richtig = + Einsatz, falsch = − Einsatz. «Gleich» richtig = doppelte Punkte. Bei gleichem Wert sind Höher/Tiefer falsch. Bei 0 Punkten ist Schluss. Hilfe zeigt die Wahrscheinlichkeiten anhand der restlichen Karten und kostet 0,5 Punkte pro Tipp.</div>';
+      '<div class="rules">Deutschschweizer Blatt: 6, 7, 8, 9, 10, Under, Ober, König, As – das As ist die höchste Karte. Richtig = + Einsatz, falsch = − Einsatz. «Gleich» richtig = doppelte Punkte. Bei gleichem Wert sind Höher/Tiefer falsch. Bei 0 Punkten ist Schluss. Hilfe zeigt die Wahrscheinlichkeiten anhand der restlichen Karten und kostet 0,5 Punkte pro Tipp.</div>' +
+      '<div class="rules">Kartenbilder: Foto «Kaiserspiel» von Countakeshi, Wikimedia Commons, <a href="https://creativecommons.org/licenses/by-sa/4.0/deed.de" target="_blank" rel="noopener">CC BY-SA 4.0</a>. Zugeschnitten, verkleinert, zu einem Bogen zusammengesetzt; die Herstellerbeschriftung auf zwei Assen wurde retuschiert.</div>';
     var q = function (s) { return el.querySelector(s); };
 
     function newDeck() {
@@ -52,9 +47,9 @@ registerGame({
       }
     }
     function show() {
-      var rk = q('[data-rank]'); rk.textContent = LABEL[cur.v] || cur.v; rk.className = LABEL[cur.v] ? 'w' : '';
-      q('[data-suit]').innerHTML = ICON[cur.s]; q('[data-sname]').textContent = SUITS[cur.s][1];
-      q('[data-card]').className = 'card'; q('[data-card]').style.color = SUITS[cur.s][2];
+      var cd = q('[data-card]'); cd.className = 'card kimg';
+      cd.style.backgroundPosition = ((cur.v - 6) * 12.5) + '% ' + (cur.s * 33.3333) + '%';
+      cd.setAttribute('aria-label', name(cur));
       q('[data-pts]').textContent = fmt(points); q('[data-best]').textContent = fmt(best); q('[data-left]').textContent = deck.length;
       q('[data-betbox]').classList.toggle('hide', !gamble);
       var gb = q('[data-gamble]'); gb.textContent = 'Gamble: ' + (gamble ? 'an' : 'aus'); gb.classList.toggle('on', gamble);
