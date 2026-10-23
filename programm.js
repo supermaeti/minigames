@@ -1,12 +1,12 @@
 (function () {
   var cleanup = function () {};
   registerGame({
-    id: 'programm', icon: '💻', title: 'Was kommt raus?', desc: 'Wie lautet x am Ende des Programms?',
+    id: 'programm', icon: '💻', title: 'Was kommt raus?', desc: 'Wie lautet die letzte Variable am Ende?',
     stop: function () { cleanup(); },
     start: function (el) {
       cleanup();
-      var ID = 'programm', rnd = function (n) { return Math.floor(Math.random() * n); };
-      var score = 0, lives = 3, ans = 0, lines = [], input = '', state = 'ready';
+      var ID = 'programm', NAMES = ['x', 'y', 'z', 'a', 'b', 'c'], rnd = function (n) { return Math.floor(Math.random() * n); };
+      var score = 0, lives = 3, ans = 0, lines = [], trace = '', cur = 'x', input = '', state = 'ready';
       el.innerHTML = '<div class="top"><div class="pts"><span data-score>0</span><small>Punkte</small></div><div class="meta"><span data-lives></span><br>Rekord: <span data-best></span></div></div>' +
         '<div class="stage a" data-stage></div><div class="msg" data-msg></div><div class="pad" data-pad></div>';
       var q = function (s) { return el.querySelector(s); }, stage = q('[data-stage]'), msg = q('[data-msg]'), pad = q('[data-pad]');
@@ -16,24 +16,33 @@
       }
       function gen() {
         for (var tries = 0; tries < 100; tries++) {
-          var x = 1 + rnd(9), L = ['x = ' + x], steps = 2 + Math.min(2, Math.floor(score / 3));
+          var x = 1 + rnd(9), vi = 0, v = NAMES[0], L = [v + ' = ' + x], tr = [String(x)], steps = 2 + Math.min(2, Math.floor(score / 3));
           var types = ['+', '-', '*']; if (score >= 6) types.push('loop'); if (score >= 9) types.push('if');
           for (var s = 0; s < steps; s++) {
-            var t = types[rnd(types.length)], n, k, c;
-            if (t === '+') { n = 1 + rnd(9); L.push('x = x + ' + n); x += n; }
-            else if (t === '-') { n = 1 + rnd(Math.min(9, x)); L.push('x = x - ' + n); x -= n; }
-            else if (t === '*') { n = 2 + rnd(2); L.push('x = x * ' + n); x *= n; }
-            else if (t === 'loop') { k = 2 + rnd(3); n = 1 + rnd(5); L.push('wiederhole ' + k + ' mal:'); L.push('  x = x + ' + n); x += k * n; }
-            else { c = Math.max(1, x - 3 + rnd(7)); n = 1 + rnd(Math.min(8, c)); L.push('wenn x > ' + c + ':'); L.push('  x = x - ' + n); if (x > c) x -= n; }
+            var t = types[rnd(types.length)], n, k, c, nv;
+            if (t === '+' || t === '-' || t === '*') {
+              nv = NAMES[++vi];
+              if (t === '+') { n = 1 + rnd(9); L.push(nv + ' = ' + v + ' + ' + n); x += n; }
+              else if (t === '-') { n = 1 + rnd(Math.min(9, x)); L.push(nv + ' = ' + v + ' - ' + n); x -= n; }
+              else { n = 2 + rnd(2); L.push(nv + ' = ' + v + ' * ' + n); x *= n; }
+              v = nv; tr.push(String(x));
+            } else if (t === 'loop') {
+              k = 2 + rnd(3); n = 1 + rnd(5); L.push('wiederhole ' + k + ' mal:'); L.push('  ' + v + ' = ' + v + ' + ' + n);
+              x += k * n; tr.push(String(x));
+            } else {
+              c = Math.max(1, x - 3 + rnd(7)); n = 1 + rnd(Math.min(8, c));
+              L.push('wenn ' + v + ' > ' + c + ':'); L.push('  ' + v + ' = ' + v + ' - ' + n);
+              if (x > c) { x -= n; tr.push(String(x)); } else tr.push(x + ' (nicht erfüllt)');
+            }
           }
-          if (x >= 0 && x <= 999) { lines = L; ans = x; return; }
+          if (x >= 0 && x <= 999) { lines = L; ans = x; trace = tr.join(' → '); cur = v; return; }
         }
       }
-      function render() { stage.innerHTML = '<pre class="code">' + lines.join('\n') + '</pre><div class="big">x = ' + (input || '…') + '</div>'; }
+      function render() { stage.innerHTML = '<pre class="code">' + lines.join('\n') + '</pre><div class="big">' + cur + ' = ' + (input || '…') + '</div>'; }
       function next() { gen(); input = ''; render(); }
       function answer() {
-        if (parseInt(input, 10) === ans) { score++; msg.textContent = '✓'; msg.className = 'msg ok'; }
-        else { lives--; msg.textContent = '✗ Es war ' + ans; msg.className = 'msg bad'; }
+        if (parseInt(input, 10) === ans) { score++; msg.textContent = '✓ ' + trace; msg.className = 'msg ok'; }
+        else { lives--; msg.textContent = '✗ Es war ' + ans + ' (' + trace + ')'; msg.className = 'msg bad'; }
         upd();
         if (lives <= 0) over(); else next();
       }

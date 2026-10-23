@@ -63,3 +63,4 @@ button:disabled{opacity:.35}
 .hist b{letter-spacing:.35em;font-family:ui-monospace,Menlo,Consolas,monospace}
 .card .w{font-size:44px}
 .card .n{font-size:16px;font-weight:400;color:var(--mute)}
+.info{border:1px solid var(--line);border-radius:12px;padding:10px 14px;background:var(--card);font-size:15px;line-height:1.7}

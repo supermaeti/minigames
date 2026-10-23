@@ -11,13 +11,14 @@
         XOR: [function (a, b) { return a ^ b; }, 'genau eine 1'], NAND: [function (a, b) { return 1 - (a & b); }, 'nicht beide 1'],
         NOR: [function (a, b) { return 1 - (a | b); }, 'keine 1'], NOT: [function (a) { return 1 - a; }, 'dreht um']
       };
-      var score = 0, lives = 3, ans = 0, expr = '', hint = '', state = 'ready', tm = null;
+      var score = 0, lives = 3, ans = 0, expr = '', hint = '', state = 'ready', tm = null, practice = false;
       el.innerHTML = '<div class="top"><div class="pts"><span data-score>0</span><small>Punkte</small></div><div class="meta"><span data-lives></span><br>Rekord: <span data-best></span></div></div>' +
-        '<div class="stage s" data-stage></div><div class="tbar"><i data-bar></i></div><div class="msg" data-msg></div><div data-ctl></div>';
+        '<div class="stage s" data-stage></div><div class="tbar"><i data-bar></i></div><div class="msg" data-msg></div><div data-ctl></div>' +
+        '<div class="row"><button class="alt" data-help>?</button><button class="alt" data-prac>Übung: aus</button></div><div class="info hide" data-info></div>';
       var q = function (s) { return el.querySelector(s); }, stage = q('[data-stage]'), bar = q('[data-bar]'), msg = q('[data-msg]'), ctl = q('[data-ctl]');
       function upd() {
         q('[data-score]').textContent = score; q('[data-best]').textContent = fmt(store.get('best_' + ID, 0));
-        q('[data-lives]').textContent = '❤️'.repeat(lives) + '🖤'.repeat(3 - lives);
+        q('[data-lives]').textContent = practice ? 'Übung' : '❤️'.repeat(lives) + '🖤'.repeat(3 - lives);
       }
       function stopBar() { bar.style.transition = 'none'; bar.style.width = '0%'; }
       function startBar(ms) { bar.style.transition = 'none'; bar.style.width = '100%'; void bar.offsetWidth; bar.style.transition = 'width ' + ms + 'ms linear'; bar.style.width = '0%'; }
@@ -35,15 +36,16 @@
       }
       function next() {
         gen(); stage.innerHTML = '<div class="big">' + expr + '</div>';
-        var lim = Math.max(5000, 9000 - score * 100); startBar(lim);
+        if (practice) { stopBar(); return; }
+        var lim = Math.max(7000, 12000 - score * 100); startBar(lim);
         tm = setTimeout(function () { answer(-1); }, lim);
       }
       function answer(v) {
         clearTimeout(tm);
         if (v === ans) { score++; msg.textContent = '✓ ' + expr + ' = ' + ans + hint; msg.className = 'msg ok'; }
-        else { lives--; msg.textContent = (v === -1 ? 'Zeit! ' : '✗ ') + expr + ' = ' + ans + hint; msg.className = 'msg bad'; }
+        else { if (!practice) lives--; msg.textContent = (v === -1 ? 'Zeit! ' : '✗ ') + expr + ' = ' + ans + hint; msg.className = 'msg bad'; }
         upd();
-        if (lives <= 0) over(); else next();
+        if (!practice && lives <= 0) over(); else next();
       }
       function over() {
         state = 'over'; stopBar();
@@ -60,6 +62,16 @@
         var k = b.getAttribute('data-k');
         if (k === 'go') begin(); else if (state === 'running') answer(parseInt(k, 10));
       });
+      var info = q('[data-info]');
+      info.innerHTML = '<b>AND</b> – 1, wenn beide 1 sind<br><b>OR</b> – 1, wenn mindestens eine 1 ist<br><b>NOT</b> – dreht um (0 wird 1, 1 wird 0)<br><b>XOR</b> – 1, wenn die beiden verschieden sind<br><b>NAND</b> – Gegenteil von AND<br><b>NOR</b> – Gegenteil von OR<br>Klammern rechnest du zuerst.';
+      function toReady() {
+        clearTimeout(tm); stopBar(); state = 'ready'; msg.textContent = ''; msg.className = 'msg';
+        stage.innerHTML = '<div class="big">Bereit?</div>'; single('Start'); upd();
+      }
+      q('[data-help]').onclick = function () { info.classList.toggle('hide'); };
+      q('[data-prac]').onclick = function () {
+        practice = !practice; this.textContent = 'Übung: ' + (practice ? 'an' : 'aus'); this.classList.toggle('on', practice); toReady();
+      };
       cleanup = function () { clearTimeout(tm); state = 'gone'; };
       stage.innerHTML = '<div class="big">Bereit?</div>'; single('Start'); upd();
     }
