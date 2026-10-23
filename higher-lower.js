@@ -3,6 +3,12 @@ registerGame({
   stop: function () {},
   start: function (el) {
     var ID = 'higher-lower', SUITS = [['🌹', 'Rosen', '#d6336c'], ['🛡️', 'Schilten', '#c0392b'], ['🌰', 'Eicheln', '#2d7a45'], ['🔔', 'Schellen', '#c98a00']], LABEL = { 11: 'Under', 12: 'Ober', 13: 'König', 14: 'As' };
+    var ICON = [
+      "<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64' width='72' height='72'><g fill='#e0457b' stroke='#a61e4d' stroke-width='1.5'><circle cx='32' cy='14' r='11'/><circle cx='49' cy='26.4' r='11'/><circle cx='42.6' cy='46.6' r='11'/><circle cx='21.4' cy='46.6' r='11'/><circle cx='15' cy='26.4' r='11'/></g><circle cx='32' cy='32' r='10' fill='#a61e4d'/><circle cx='32' cy='32' r='4.5' fill='#f7c948'/></svg>",
+      "<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64' width='72' height='72'><path d='M9 6H55V34C55 48 45 58 32 62C19 58 9 48 9 34Z' fill='#c0392b' stroke='#7b1f15' stroke-width='2'/><rect x='28' y='13' width='8' height='38' fill='#fff'/><rect x='17' y='24' width='30' height='8' fill='#fff'/></svg>",
+      "<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64' width='72' height='72'><path d='M32 14V4' stroke='#5d4037' stroke-width='4' stroke-linecap='round'/><path d='M15 28C15 46 23 58 32 61C41 58 49 46 49 28Z' fill='#8bc34a' stroke='#4e7d1f' stroke-width='2'/><path d='M10 28C10 17 20 12 32 12C44 12 54 17 54 28Z' fill='#6d4c41' stroke='#3e2723' stroke-width='2'/><path d='M18 20L24 28M28 16L34 28M40 16L46 28' stroke='#3e2723' stroke-width='1.5' fill='none'/></svg>",
+      "<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64' width='72' height='72'><circle cx='32' cy='7' r='4' fill='#b87f00'/><path d='M32 9C22 9 16 17 16 28C16 40 10 45 7 51H57C54 45 48 40 48 28C48 17 42 9 32 9Z' fill='#f2b01e' stroke='#b87f00' stroke-width='2'/><path d='M22 24C22 18 26 14 30 13' stroke='#fde08a' stroke-width='3' stroke-linecap='round' fill='none'/><circle cx='32' cy='56' r='6' fill='#b87f00'/></svg>"
+    ];
     var NAMES = { lower: 'Tiefer', equal: 'Gleich', higher: 'Höher' };
     var deck = [], cur = null, points = 10, bet = 1, gamble = false, help = false, over = false;
     var best = Math.max(10, store.get('best_' + ID, 10));
@@ -25,7 +31,7 @@ registerGame({
       return d;
     }
     function draw() { if (!deck.length) deck = newDeck(); return deck.pop(); }
-    function name(c) { return (LABEL[c.v] || c.v) + ' ' + SUITS[c.s][0]; }
+    function name(c) { return SUITS[c.s][1] + '-' + (LABEL[c.v] || c.v); }
     function probs() {
       var d = deck.length ? deck : newDeck(), l = 0, e = 0, h = 0;
       d.forEach(function (c) { if (c.v < cur.v) l++; else if (c.v > cur.v) h++; else e++; });
@@ -47,7 +53,7 @@ registerGame({
     }
     function show() {
       var rk = q('[data-rank]'); rk.textContent = LABEL[cur.v] || cur.v; rk.className = LABEL[cur.v] ? 'w' : '';
-      q('[data-suit]').textContent = SUITS[cur.s][0]; q('[data-sname]').textContent = SUITS[cur.s][1];
+      q('[data-suit]').innerHTML = ICON[cur.s]; q('[data-sname]').textContent = SUITS[cur.s][1];
       q('[data-card]').className = 'card'; q('[data-card]').style.color = SUITS[cur.s][2];
       q('[data-pts]').textContent = fmt(points); q('[data-best]').textContent = fmt(best); q('[data-left]').textContent = deck.length;
       q('[data-betbox]').classList.toggle('hide', !gamble);
