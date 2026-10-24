@@ -75,3 +75,26 @@ button:disabled{opacity:.35}
 .lc{aspect-ratio:1;padding:0;border-radius:10px;background:var(--line);border-color:var(--line)}
 .lc.on{background:#f2b01e;border-color:#c98a00}
 .lc.hint{outline:4px solid var(--btn);outline-offset:2px}
+.rc{width:100%;aspect-ratio:9/5;display:block;background:var(--card);border:2px solid var(--line);border-radius:14px;touch-action:none}
+.wg{display:grid;gap:2px;touch-action:none;user-select:none;-webkit-user-select:none}
+.wc{aspect-ratio:1;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:clamp(14px,4.8vw,21px);background:var(--card);border:1px solid var(--line);border-radius:6px}
+.wc.sel{background:#f2b01e;color:#1d1d1b}
+.wc.hint{outline:3px solid var(--btn);outline-offset:-2px}
+.wc.f0{background:#9ad1a5;color:#1d1d1b}.wc.f1{background:#f6c85f;color:#1d1d1b}.wc.f2{background:#8ec5e8;color:#1d1d1b}
+.wc.f3{background:#f2a0b8;color:#1d1d1b}.wc.f4{background:#c3a6e0;color:#1d1d1b}.wc.f5{background:#f4a261;color:#1d1d1b}
+.words{display:flex;flex-wrap:wrap;gap:6px;justify-content:center}
+.words span{padding:3px 9px;border:1px solid var(--line);border-radius:12px;font-size:14px;background:var(--card)}
+.words .done{text-decoration:line-through;opacity:.5}
+.mono{font-family:ui-monospace,Menlo,Consolas,monospace;letter-spacing:.14em}
+.abc{display:grid;grid-template-columns:repeat(26,1fr);font-family:ui-monospace,Menlo,Consolas,monospace;font-size:11px;text-align:center}
+.abc.d{color:var(--btn);font-weight:700}
+.ss{position:relative;height:150px;margin-top:18px}
+.beam{position:absolute;left:0;right:0;top:84px;height:12px;background:#8b6b3f;border-radius:6px;transition:transform .35s ease;transform-origin:50% 50%}
+.pivot{position:absolute;left:50%;top:96px;width:0;height:0;border-left:24px solid transparent;border-right:24px solid transparent;border-bottom:46px solid var(--mute);transform:translateX(-50%)}
+.wt{position:absolute;width:36px;height:30px;transform:translateX(-50%);border-radius:5px;background:var(--btn);color:#fff;font-size:13px;display:flex;align-items:center;justify-content:center;font-weight:700}
+.wt.l{background:#c0392b}
+.tp{position:absolute;top:14px;transform:translateX(-50%);width:32px;height:28px;font-size:12px;background:transparent;color:var(--mute);border:1px dashed var(--line);padding:0;flex:none}
+.tl{position:absolute;top:16px;transform:translateX(-50%);font-size:12px;color:var(--mute)}
+.chips{display:flex;gap:8px;justify-content:center;flex-wrap:wrap}
+.chips button{flex:none;padding:10px 16px;font-size:16px}
+.emo{font-size:84px;line-height:1.1}
