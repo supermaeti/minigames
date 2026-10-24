@@ -67,3 +67,11 @@ button:disabled{opacity:.35}
 .card .s svg{display:block}
 .card.kimg{width:170px;height:auto;aspect-ratio:180/292;background-color:#fff;background-image:url(karten.jpg);background-repeat:no-repeat;background-size:900% 400%;border:0;border-radius:9px;box-shadow:0 1px 5px rgba(0,0,0,.3)}
 .rules a{color:inherit}
+.tubes{display:flex;flex-wrap:wrap;gap:16px 10px;justify-content:center}
+.tube{width:46px;height:162px;border:3px solid var(--line);border-radius:6px 6px 22px 22px;display:flex;flex-direction:column-reverse;align-items:center;padding:3px 0;gap:2px;background:var(--card);cursor:pointer;touch-action:manipulation}
+.tube.sel{border-color:var(--btn);transform:translateY(-8px)}
+.ball{width:34px;height:34px;border-radius:50%;box-shadow:inset -3px -3px 5px rgba(0,0,0,.25)}
+.lg{display:grid;gap:6px}
+.lc{aspect-ratio:1;padding:0;border-radius:10px;background:var(--line);border-color:var(--line)}
+.lc.on{background:#f2b01e;border-color:#c98a00}
+.lc.hint{outline:4px solid var(--btn);outline-offset:2px}
