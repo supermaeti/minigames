@@ -33,8 +33,26 @@
           n = 0; state = 'ready'; btn.textContent = 'Tippen!'; msg.textContent = HINT; q('[data-t]').textContent = '10,0'; upd();
         }
       }
-      btn.addEventListener('pointerdown', function (e) { e.preventDefault(); tap(); });
-      btn.addEventListener('click', function (e) { if (e.detail === 0) tap(); });
+      // Nur ein Finger zählt: weitere gleichzeitige Berührungen werden ignoriert, ausserdem gibt es einen Mindestabstand zwischen zwei Tipps
+      var downs = {}, lastTap = 0, WARN = 'Nur ein Finger zählt!';
+      function release(e) { delete downs[e.pointerId]; }
+      btn.addEventListener('pointerdown', function (e) {
+        e.preventDefault();
+        var now = performance.now(), id, busy = false;
+        for (id in downs) { if (now - downs[id] > 1500) delete downs[id]; else busy = true; }
+        if (busy || e.isPrimary === false) { if (state === 'running') msg.textContent = WARN; return; }
+        if (now - lastTap < 45) return;
+        downs[e.pointerId] = now; lastTap = now;
+        if (msg.textContent === WARN) msg.textContent = '';
+        tap();
+      });
+      btn.addEventListener('click', function (e) {
+        if (e.detail !== 0) return;
+        var now = performance.now(); if (now - lastTap < 45) return; lastTap = now; tap();
+      });
+      window.addEventListener('pointerup', release); window.addEventListener('pointercancel', release);
+      var baseCleanup = cleanup;
+      cleanup = function () { baseCleanup(); window.removeEventListener('pointerup', release); window.removeEventListener('pointercancel', release); };
       upd();
     }
   });
