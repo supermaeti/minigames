@@ -5,7 +5,7 @@ registerGame({
     var ID = 'higher-lower', SUITS = [['🌹', 'Rosen', '#d6336c'], ['🛡️', 'Schilten', '#c0392b'], ['🌰', 'Eicheln', '#2d7a45'], ['🔔', 'Schellen', '#c98a00']], LABEL = { 11: 'Under', 12: 'Ober', 13: 'König', 14: 'As' };
     var NAMES = { lower: 'Tiefer', equal: 'Gleich', higher: 'Höher' };
     var deck = [], cur = null, points = 10, bet = 1, gamble = false, help = false, over = false;
-    var best = Math.max(10, store.get('best_' + ID, 10));
+    var best = store.get('best_' + ID, 0);
     el.innerHTML =
       '<div class="top"><div class="pts"><span data-pts>10</span><small>Punkte</small></div>' +
       '<div class="meta">Rekord: <span data-best></span><br>Karten übrig: <span data-left></span></div></div>' +
@@ -15,7 +15,7 @@ registerGame({
       '<div class="row" data-guess><button data-g="lower">Tiefer</button><button data-g="equal">Gleich</button><button data-g="higher">Höher</button></div>' +
       '<div class="row"><button class="alt" data-gamble></button><button class="alt" data-help></button></div>' +
       '<div class="row"><button class="alt hide" data-again>Neues Spiel</button></div>' +
-      '<div class="rules">Deutschschweizer Blatt: 6, 7, 8, 9, 10, Under, Ober, König, As – das As ist die höchste Karte. Richtig = + Einsatz, falsch = − Einsatz. «Gleich» richtig = doppelte Punkte. Bei gleichem Wert sind Höher/Tiefer falsch. Bei 0 Punkten ist Schluss. Hilfe zeigt die Wahrscheinlichkeiten anhand der restlichen Karten und kostet 0,5 Punkte pro Tipp.</div>' +
+      '<div class="rules">Deutschschweizer Blatt: 6, 7, 8, 9, 10, Under, Ober, König, As – das As ist die höchste Karte. Richtig = + Einsatz, falsch = − Einsatz. «Gleich» richtig = doppelte Punkte. Bei gleichem Wert sind Höher/Tiefer falsch. Das Spiel endet, wenn alle 36 Karten gespielt sind oder du 0 Punkte hast. Der Endstand zählt für den Rekord. Hilfe zeigt die Wahrscheinlichkeiten anhand der restlichen Karten und kostet 0,5 Punkte pro Tipp.</div>' +
       '<div class="rules">Kartenbilder: Foto «Kaiserspiel» von Countakeshi, Wikimedia Commons, <a href="https://creativecommons.org/licenses/by-sa/4.0/deed.de" target="_blank" rel="noopener">CC BY-SA 4.0</a>. Zugeschnitten, verkleinert, zu einem Bogen zusammengesetzt; die Herstellerbeschriftung auf zwei Assen wurde retuschiert.</div>';
     var q = function (s) { return el.querySelector(s); };
 
@@ -82,11 +82,14 @@ registerGame({
       else { delta = -bet; txt = 'Falsch. −' + bet; }
       points = Math.max(0, points + delta - (help ? 0.5 : 0));
       if (help) txt += ' (Hilfe −0,5)';
-      if (points > best) { best = points; setBest(ID, best); }
       cur = next;
       if (bet > points) bet = Math.max(1, Math.floor(points));
-      if (points <= 0) { over = true; setMsg(name(prev) + ' → ' + name(next) + '. ' + txt + ' Spiel vorbei!', 'bad'); }
-      else setMsg(name(prev) + ' → ' + name(next) + '. ' + txt, delta > 0 ? 'ok' : delta < 0 ? 'bad' : '');
+      var head = name(prev) + ' → ' + name(next) + '. ' + txt;
+      if (points <= 0) { over = true; setMsg(head + ' Spiel vorbei!', 'bad'); }
+      else if (deck.length === 0) {
+        over = true; var old = best; if (points > best) { best = points; setBest(ID, best); }
+        setMsg(head + ' Deck durch! Endstand: ' + fmt(points) + ' Punkte' + (points > old ? ' – neuer Rekord!' : ''), 'ok');
+      } else setMsg(head, delta > 0 ? 'ok' : delta < 0 ? 'bad' : '');
       show(); flip();
       if (delta > 0) burst();
     }
